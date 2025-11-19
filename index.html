@@ -2,9 +2,26 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <title>xxtui-main - GitHub 用户信息</title>
+  <title>xxtui - 极简个人推送 API</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="xxtui - 仅需一个 URL，轻松实现多渠道消息推送，支持微信公众号、企业微信、钉钉、飞书、Bark、邮件、短信、自定义接口等。" />
+
   <style>
+    :root {
+      --bg: #020617;
+      --bg-soft: #020617;
+      --bg-section: #020617;
+      --card-bg: rgba(15, 23, 42, 0.96);
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.12);
+      --accent-strong: rgba(56, 189, 248, 0.28);
+      --text-main: #e5e7eb;
+      --text-soft: #9ca3af;
+      --border-soft: rgba(148, 163, 184, 0.4);
+      --radius-lg: 18px;
+      --shadow-soft: 0 24px 70px rgba(15, 23, 42, 0.85);
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -12,339 +29,943 @@
     }
 
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #f5f7ff, #ebeff7);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #0f172a 0, #020617 45%, #020617 100%);
+      color: var(--text-main);
       min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 10px 0 12px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(18px);
+      background: radial-gradient(circle at top, rgba(15,23,42,0.92), rgba(15,23,42,0.9));
+      border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+    }
+
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 12px;
+      background: radial-gradient(circle at 20% 0, #38bdf8, #0ea5e9, #0f172a);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 16px;
+      box-shadow: 0 10px 28px rgba(56, 189, 248, 0.45);
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
     }
 
-    .card {
-      max-width: 480px;
-      width: 100%;
-      background: #ffffff;
-      border-radius: 20px;
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
-      padding: 24px 24px 20px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: -40%;
-      background: radial-gradient(circle at 10% 0, rgba(59,130,246,0.15), transparent 60%),
-                  radial-gradient(circle at 100% 100%, rgba(52,211,153,0.12), transparent 55%);
-      opacity: 0.7;
-      pointer-events: none;
-    }
-
-    .card-inner {
-      position: relative;
-      z-index: 1;
-    }
-
-    .header {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 16px;
-    }
-
-    .avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      border: 3px solid rgba(255,255,255,0.9);
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.35);
-      object-fit: cover;
-      background: #f1f5f9;
-    }
-
-    .name-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 4px;
-    }
-
-    .name {
-      font-size: 22px;
-      font-weight: 700;
-      color: #0f172a;
-    }
-
-    .username {
-      font-size: 14px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.05);
-      color: #475569;
-    }
-
-    .bio {
-      font-size: 14px;
-      color: #4b5563;
-      line-height: 1.6;
-      margin-bottom: 6px;
-    }
-
-    .meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 4px;
-      font-size: 13px;
-      color: #64748b;
-    }
-
-    .meta-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: rgba(148, 163, 184, 0.12);
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      margin: 18px 0 10px;
-    }
-
-    .stat {
-      padding: 12px 10px;
-      border-radius: 14px;
-      background: rgba(15, 23, 42, 0.02);
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      text-align: center;
-    }
-
-    .stat-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: #94a3b8;
-      margin-bottom: 4px;
-    }
-
-    .stat-value {
+    .logo-text-main {
       font-size: 18px;
       font-weight: 700;
-      color: #0f172a;
+      letter-spacing: 0.04em;
     }
 
-    .links {
+    .logo-text-sub {
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      font-size: 13px;
+      color: var(--text-soft);
+    }
+
+    nav a {
+      padding: 4px 0;
+      position: relative;
+    }
+
+    nav a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      width: 0;
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(to right, #38bdf8, #22d3ee);
+      transition: width 0.16s ease-out;
+    }
+
+    nav a:hover::after {
+      width: 100%;
+    }
+
+    .nav-cta {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.7);
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.22), rgba(15, 23, 42, 1));
+      color: #ecfeff;
+      font-size: 12px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 10px 26px rgba(8, 47, 73, 0.6);
+    }
+
+    .nav-cta span {
+      font-size: 14px;
+    }
+
+    main {
+      margin-top: 28px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 3.2fr) minmax(0, 2.8fr);
+      gap: 34px;
+      align-items: center;
+    }
+
+    .hero-title {
+      font-size: clamp(28px, 4vw, 36px);
+      line-height: 1.15;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .hero-title span.badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: rgba(22, 163, 74, 0.12);
+      border: 1px solid rgba(22, 163, 74, 0.4);
+      color: #bbf7d0;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-left: 4px;
+      transform: translateY(-2px);
+    }
+
+    .hero-desc {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text-soft);
+      max-width: 520px;
+      margin-bottom: 18px;
+    }
+
+    .hero-tags {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-top: 4px;
+      margin-bottom: 18px;
+      font-size: 11px;
+      color: #bae6fd;
+    }
+
+    .hero-tag {
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      background: rgba(8, 47, 73, 0.6);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      padding: 8px 12px;
+      gap: 8px;
+      padding: 9px 14px;
       border-radius: 999px;
-      border: 1px solid rgba(37, 99, 235, 0.6);
-      background: #2563eb;
-      color: #ffffff;
+      border: 1px solid transparent;
       font-size: 13px;
       font-weight: 500;
-      text-decoration: none;
       cursor: pointer;
-      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, background 0.12s;
-      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, background 0.12s ease-out, border-color 0.12s ease-out;
     }
 
-    .btn.secondary {
-      background: rgba(15, 23, 42, 0.02);
-      color: #1f2937;
-      border-color: rgba(148, 163, 184, 0.9);
-      box-shadow: none;
+    .btn-primary {
+      background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+      border-color: rgba(125, 211, 252, 0.7);
+      color: #0b1120;
+      box-shadow: 0 18px 40px rgba(8, 47, 73, 0.8);
     }
 
-    .btn:hover {
+    .btn-primary:hover {
       transform: translateY(-1px);
-      box-shadow: 0 14px 28px rgba(37, 99, 235, 0.5);
-      background: #1d4ed8;
+      box-shadow: 0 22px 55px rgba(8, 47, 73, 0.95);
     }
 
-    .btn.secondary:hover {
-      background: rgba(148, 163, 184, 0.18);
-      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.15);
+    .btn-ghost {
+      background: rgba(15, 23, 42, 0.8);
+      border-color: rgba(148, 163, 184, 0.7);
+      color: var(--text-main);
     }
 
-    .footer-text {
-      margin-top: 12px;
+    .btn-ghost:hover {
+      background: rgba(15, 23, 42, 0.96);
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.8);
+    }
+
+    .btn-code {
+      font-size: 12px;
+      border-radius: 999px;
+      border: 1px dashed rgba(148, 163, 184, 0.7);
+      padding: 4px 10px;
+      background: rgba(15, 23, 42, 0.85);
+      color: var(--text-soft);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .btn-code span.icon {
+      font-size: 13px;
+    }
+
+    .hero-footnote {
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 10px;
+    }
+
+    .hero-footnote strong {
+      color: #e5e7eb;
+      font-weight: 500;
+    }
+
+    .hero-card {
+      border-radius: 22px;
+      background: radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.2), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.3), transparent 55%),
+        rgba(15, 23, 42, 0.96);
+      padding: 16px 16px 12px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 11px;
+      color: #d1fae5;
+    }
+
+    .hero-card-header span.tag {
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: rgba(22, 163, 74, 0.25);
+      border: 1px solid rgba(22, 163, 74, 0.9);
+    }
+
+    .hero-card-header span.env {
+      color: #bae6fd;
+    }
+
+    .hero-card-shell {
+      background: rgba(15, 23, 42, 0.92);
+      border-radius: 16px;
+      border: 1px solid rgba(15, 23, 42, 0.96);
+      padding: 10px 10px 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+      font-size: 11px;
+      line-height: 1.6;
+      color: #e5e7eb;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .shell-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      color: #9ca3af;
+    }
+
+    .shell-dots {
+      display: flex;
+      gap: 4px;
+    }
+
+    .shell-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #f97373;
+    }
+
+    .shell-dot:nth-child(2) {
+      background: #fbbf24;
+    }
+
+    .shell-dot:nth-child(3) {
+      background: #22c55e;
+    }
+
+    .hero-card-code {
+      white-space: pre;
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+
+    .hero-card-hint {
+      margin-top: 6px;
+      font-size: 10px;
+      color: #9ca3af;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .badge-inline {
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+    }
+
+    .btn-copy {
+      border-radius: 999px;
+      padding: 2px 7px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: rgba(15, 23, 42, 0.9);
+      font-size: 10px;
+      cursor: pointer;
+      color: #e5e7eb;
+    }
+
+    .section {
+      margin-top: 40px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .section-title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: #6b7280;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .section-desc {
+      font-size: 12px;
+      color: #9ca3af;
+      max-width: 380px;
+      line-height: 1.7;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      border-radius: var(--radius-lg);
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--border-soft);
+      padding: 14px 14px 12px;
+      font-size: 13px;
+    }
+
+    .card-highlight {
+      background: radial-gradient(circle at top, var(--accent-soft), rgba(15, 23, 42, 1));
+      border-color: var(--accent-strong);
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .card-body {
+      font-size: 12px;
+      color: var(--text-soft);
+      line-height: 1.7;
+    }
+
+    .card-tagline {
+      margin-top: 8px;
+      font-size: 11px;
+      color: #bae6fd;
+    }
+
+    .list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+
+    .list li {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      margin-bottom: 6px;
+    }
+
+    .list li span.dot {
+      margin-top: 4px;
+      width: 5px;
+      height: 5px;
+      border-radius: 999px;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .step {
+      border-radius: var(--radius-lg);
+      padding: 12px 12px 10px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px dashed rgba(148, 163, 184, 0.6);
+      font-size: 12px;
+    }
+
+    .step-index {
       font-size: 11px;
       color: #9ca3af;
-      text-align: right;
+      margin-bottom: 4px;
     }
 
-    .footer-text a {
-      color: #1d4ed8;
-      text-decoration: none;
-    }
-
-    .status {
+    .step-title {
       font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .code-block {
+      border-radius: 16px;
+      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      padding: 10px 10px 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+      font-size: 11px;
+      color: #e5e7eb;
+      overflow-x: auto;
+    }
+
+    .code-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 8px;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    .code-tab {
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+
+    .code-tab.active {
+      border-color: rgba(56, 189, 248, 0.7);
+      background: rgba(8, 47, 73, 0.85);
+      color: #e0f2fe;
+    }
+
+    .code-content {
+      white-space: pre;
+    }
+
+    footer {
+      margin-top: 40px;
+      font-size: 11px;
       color: #6b7280;
-      margin-bottom: 10px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(31, 41, 55, 0.9);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .status.error {
-      color: #b91c1c;
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
-    @media (max-width: 480px) {
-      .card {
-        padding: 18px 16px 16px;
-        border-radius: 18px;
-      }
+    .footer-links a {
+      color: #9ca3af;
+      font-size: 11px;
+    }
 
-      .header {
+    .footer-links a:hover {
+      color: #e5e7eb;
+    }
+
+    @media (max-width: 880px) {
+      header {
+        flex-direction: column;
         align-items: flex-start;
-      }
-
-      .avatar {
-        width: 70px;
-        height: 70px;
-      }
-
-      .name {
-        font-size: 20px;
-      }
-
-      .stats {
         gap: 8px;
       }
 
-      .stat {
-        padding: 10px 6px;
+      .hero {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 20px;
+      }
+
+      .hero-card {
+        order: -1;
+      }
+
+      .grid-3 {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .steps {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      footer {
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="card-inner">
-      <div id="status" class="status">正在加载 GitHub 用户信息...</div>
-
-      <div class="header">
-        <img id="avatar" class="avatar" src="" alt="avatar" />
+  <div class="page">
+    <header>
+      <div class="logo-row">
+        <div class="logo-mark">x</div>
         <div>
-          <div class="name-row">
-            <div id="name" class="name">xxtui-main</div>
-            <div id="login" class="username">@xxtui-main</div>
-          </div>
-          <div id="bio" class="bio">一个 GitHub 用户</div>
-          <div class="meta">
-            <div id="location" class="meta-item" style="display:none;">📍 <span></span></div>
-            <div id="blog" class="meta-item" style="display:none;">🔗 <span></span></div>
-            <div id="company" class="meta-item" style="display:none;">🏢 <span></span></div>
-          </div>
+          <div class="logo-text-main">xxtui</div>
+          <div class="logo-text-sub">极简个人推送 · Message Push API</div>
         </div>
       </div>
-
-      <div class="stats">
-        <div class="stat">
-          <div class="stat-label">Repositories</div>
-          <div id="repos" class="stat-value">-</div>
-        </div>
-        <div class="stat">
-          <div class="stat-label">Followers</div>
-          <div id="followers" class="stat-value">-</div>
-        </div>
-        <div class="stat">
-          <div class="stat-label">Following</div>
-          <div id="following" class="stat-value">-</div>
-        </div>
-      </div>
-
-      <div class="links">
-        <a id="github-link" class="btn" href="https://github.com/xxtui-main" target="_blank" rel="noreferrer">
-          访问 GitHub 主页
+      <nav>
+        <a href="#why">优势</a>
+        <a href="#steps">三步上手</a>
+        <a href="#api">API 示例</a>
+        <a href="#scenes">适用场景</a>
+        <a
+          class="nav-cta"
+          href="https://www.xxtui.com/"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <span>开始使用</span>
+          <span>→</span>
         </a>
-        <a id="blog-link" class="btn secondary" href="#" target="_blank" rel="noreferrer" style="display:none;">
-          个人网站
-        </a>
-      </div>
+      </nav>
+    </header>
 
-      <div class="footer-text">
-        数据来自 <a href="https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28#get-a-user" target="_blank" rel="noreferrer">GitHub Public API</a>
+    <main>
+      <!-- Hero -->
+      <section class="hero">
+        <div>
+          <h1 class="hero-title">
+            仅需一个 URL，打通你的消息通知
+            <span class="badge">个人推送 API</span>
+          </h1>
+          <p class="hero-desc">
+            xxtui 帮你把「脚本、服务、监控、机器人」里零散的通知整合起来。
+            一条 HTTP 请求，即可把消息同步发送到微信公众号、企业微信、钉钉、飞书、Bark、邮件、短信，甚至你的自定义接口。
+          </p>
+
+          <div class="hero-tags">
+            <span class="hero-tag">支持多渠道推送</span>
+            <span class="hero-tag">免搭建通知服务</span>
+            <span class="hero-tag">适合个人 & 小团队</span>
+          </div>
+
+          <div class="hero-actions">
+            <a
+              class="btn btn-primary"
+              href="https://www.xxtui.com/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              立即体验 xxtui
+              <span>↗</span>
+            </a>
+            <a
+              class="btn btn-ghost"
+              href="https://github.com/xxtui-main/xxtui"
+              target="_blank"
+              rel="noreferrer"
+            >
+              查看 GitHub 源码
+            </a>
+          </div>
+
+          <button class="btn-code" type="button" id="scroll-to-api">
+            <span class="icon">▶</span>
+            查看一眼 API 示例
+          </button>
+
+          <p class="hero-footnote">
+            <strong>无需复杂 SDK</strong>，习惯 curl / requests / fetch 的地方，都可以直接接入。
+          </p>
+        </div>
+
+        <!-- 右侧：示例调用卡片 -->
+        <aside class="hero-card">
+          <div class="hero-card-header">
+            <span class="tag">即插即用 · Demo</span>
+            <span class="env">curl / cron / 脚本均可</span>
+          </div>
+          <div class="hero-card-shell">
+            <div class="shell-title">
+              <div class="shell-dots">
+                <span class="shell-dot"></span>
+                <span class="shell-dot"></span>
+                <span class="shell-dot"></span>
+              </div>
+              <span>notify.sh</span>
+            </div>
+            <div class="hero-card-code" id="hero-example">
+curl "https://www.xxtui.com/xxtui/&lt;API_KEY&gt;?content=备份完成 ✅&title=服务器通知&from=prod-bak"
+            </div>
+            <div class="hero-card-hint">
+              <span>
+                <span class="badge-inline">TIP</span>
+                登录 xxtui 后，把 <code>&lt;API_KEY&gt;</code> 换成你的 key 即可直接使用。
+              </span>
+              <button class="btn-copy" type="button" id="copy-hero">
+                复制示例
+              </button>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <!-- 为什么选择 xxtui -->
+      <section id="why" class="section">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <div class="section-label">Why xxtui</div>
+            <h2 class="section-title">为什么用 xxtui 来做个人推送</h2>
+          </div>
+          <p class="section-desc">
+            自己搭 webhook、邮件服务太麻烦？xxtui 帮你把这些重复工作「打包好」。
+            你只关注要发什么内容、什么时候发，其它交给平台。
+          </p>
+        </div>
+
+        <div class="grid-3">
+          <article class="card card-highlight">
+            <h3 class="card-title">接入极简 · 一条 URL 搞定</h3>
+            <p class="card-body">
+              不需要复杂 SDK，也不用注册一堆第三方应用。
+              登录获取 API_KEY，填进 URL，立刻开始推送。
+              适合脚本、定时任务、Serverless 函数等各种环境。
+            </p>
+            <p class="card-tagline">能发 HTTP 请求的地方，就能用 xxtui。</p>
+          </article>
+
+          <article class="card">
+            <h3 class="card-title">多渠道合一 · 一次请求多端到达</h3>
+            <p class="card-body">
+              同一条消息支持同时发送到
+              微信公众号、企业微信群机器人、钉钉群机器人、飞书机器人、Bark、短信 / 语音、邮件以及你的自定义 HTTP 接口。
+            </p>
+            <p class="card-tagline">不再重复接入每个平台的通知能力。</p>
+          </article>
+
+          <article class="card">
+            <h3 class="card-title">为个人设计 · 够轻量也够可控</h3>
+            <p class="card-body">
+              适合个人用户与小团队自用：有额度限制防止误发炸号，也提供消息记录、渠道配置等能力，方便排查和迭代。
+            </p>
+            <p class="card-tagline">日常「折腾」和生产通知，都能逐步迁移过来。</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- 三步上手 -->
+      <section id="steps" class="section">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <div class="section-label">Getting Started</div>
+            <h2 class="section-title">3 步完成接入</h2>
+          </div>
+          <p class="section-desc">
+            正常情况下，从「第一次打开 xxtui」到发出第一条推送，只需要几分钟。
+          </p>
+        </div>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-index">STEP 01</div>
+            <div class="step-title">注册 / 登录 xxtui</div>
+            <p>
+              访问 <a href="https://www.xxtui.com/" target="_blank" rel="noreferrer">xxtui.com</a>，
+              使用常用账号登录。进入控制台后，在「账号管理」中查看你的 <code>API_KEY</code>。
+            </p>
+          </div>
+
+          <div class="step">
+            <div class="step-index">STEP 02</div>
+            <div class="step-title">配置推送渠道</div>
+            <p>
+              根据需要绑定微信公众号、企业微信群机器人、钉钉、飞书、Bark、邮箱、手机等。
+              也可以配置自定义 HTTP 接口，扩展到你自己的服务。
+            </p>
+          </div>
+
+          <div class="step">
+            <div class="step-index">STEP 03</div>
+            <div class="step-title">在代码中发起请求</div>
+            <p>
+              把示例 URL 中的 <code>&lt;API_KEY&gt;</code> 替换为你的 key，
+              写入脚本、任务或监控系统中。以后所有通知，直接通过 xxtui 统一下发。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- API 示例 -->
+      <section id="api" class="section">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <div class="section-label">API Example</div>
+            <h2 class="section-title">常用调用方式示例</h2>
+          </div>
+          <p class="section-desc">
+            下面是 curl 与 Python 的调用示例。
+            请根据官网文档实际参数为准，你可以根据自身需要加上 <code>from</code>、
+            <code>title</code>、<code>channel</code> 等参数。
+          </p>
+        </div>
+
+        <div class="code-block">
+          <div class="code-tabs">
+            <button class="code-tab active" type="button" data-lang="curl">curl</button>
+            <button class="code-tab" type="button" data-lang="python">Python</button>
+          </div>
+          <div id="code-curl" class="code-content">
+curl "https://www.xxtui.com/xxtui/&lt;API_KEY&gt;?content=Hello%20xxtui&title=测试推送&from=demo-script"
+
+# 推荐使用 POST（仅示例）：
+curl -X POST "https://www.xxtui.com/xxtui/&lt;API_KEY&gt;" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "content=备份完成 ✅&title=服务器通知&from=prod-bak"
+          </div>
+          <div id="code-python" class="code-content" style="display:none;">
+import requests
+
+API_KEY = "&lt;API_KEY&gt;"
+url = f"https://www.xxtui.com/xxtui/{API_KEY}"
+
+data = {
+    "content": "任务执行完毕 ✅",
+    "title": "定时任务通知",
+    "from": "python-cron",
+    # "channel": "WX_MP,EMAIL",  # 可选：指定一个或多个渠道
+}
+
+resp = requests.post(url, data=data, timeout=5)
+print(resp.status_code, resp.text)
+          </div>
+        </div>
+      </section>
+
+      <!-- 适用场景 -->
+      <section id="scenes" class="section">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <div class="section-label">Use Cases</div>
+            <h2 class="section-title">典型使用场景</h2>
+          </div>
+          <p class="section-desc">
+            xxtui 适合所有「我只想简单收个通知」的场景，无论你是开发者、运维工程师，还是只是想给自己的生活加点自动化。
+          </p>
+        </div>
+
+        <div class="grid-3">
+          <article class="card">
+            <h3 class="card-title">个人运维 / 折腾党</h3>
+            <ul class="list">
+              <li>
+                <span class="dot"></span>
+                <span>服务器 CPU / 磁盘 / 内存告警，通过企业微信或钉钉推送。</span>
+              </li>
+              <li>
+                <span class="dot"></span>
+                <span>定时备份结果通知，失败立刻收到消息。</span>
+              </li>
+              <li>
+                <span class="dot"></span>
+                <span>自己写的小服务有异常，自动发消息到 Bark 或邮箱。</span>
+              </li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <h3 class="card-title">生活提醒 / 个人效率</h3>
+            <ul class="list">
+              <li>
+                <span class="dot"></span>
+                <span>信用卡还款、电费水费、定期任务等通过脚本推送提醒。</span>
+              </li>
+              <li>
+                <span class="dot"></span>
+                <span>RSS / 抓取脚本有最新内容，自动转发到个人渠道。</span>
+              </li>
+              <li>
+                <span class="dot"></span>
+                <span>把零散通知统一推到一个「消息收件箱」渠道里。</span>
+              </li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <h3 class="card-title">小团队 / Side Project</h3>
+            <ul class="list">
+              <li>
+                <span class="dot"></span>
+                <span>团队共享的「故障通知群」，由 xxtui 聚合不同服务的告警。</span>
+              </li>
+              <li>
+                <span class="dot"></span>
+                <span>为 side project 快速加上邮件 / 机器人通知，不用额外搭建。</span>
+              </li>
+              <li>
+                <span class="dot"></span>
+                <span>先用 xxtui 验证通知流程，后续再考虑自建服务也不迟。</span>
+              </li>
+            </ul>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div>© <span id="year"></span> xxtui. 极简个人推送。</div>
+      <div class="footer-links">
+        <a href="https://www.xxtui.com/" target="_blank" rel="noreferrer">官方网站</a>
+        <a href="https://github.com/xxtui-main/xxtui" target="_blank" rel="noreferrer">GitHub 仓库</a>
+        <a href="https://status.xxtui.com/" target="_blank" rel="noreferrer">可用性监控</a>
       </div>
-    </div>
+    </footer>
   </div>
 
   <script>
-    // 如果想看别的 GitHub 用户，只要改这里就行：
-    const username = "xxtui-main";
+    // 滚动到 API 示例
+    document.getElementById("scroll-to-api")?.addEventListener("click", () => {
+      document.getElementById("api")?.scrollIntoView({ behavior: "smooth" });
+    });
 
-    async function loadUser() {
-      const statusEl = document.getElementById("status");
-      try {
-        const res = await fetch(`https://api.github.com/users/${username}`);
-        if (!res.ok) {
-          throw new Error("GitHub API 请求失败：" + res.status);
+    // 切换代码示例
+    const tabs = document.querySelectorAll(".code-tab");
+    const contentCurl = document.getElementById("code-curl");
+    const contentPython = document.getElementById("code-python");
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        tabs.forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+        const lang = tab.dataset.lang;
+        if (lang === "curl") {
+          contentCurl.style.display = "block";
+          contentPython.style.display = "none";
+        } else {
+          contentCurl.style.display = "none";
+          contentPython.style.display = "block";
         }
+      });
+    });
 
-        const u = await res.json();
+    // 复制 Hero 示例
+    document.getElementById("copy-hero")?.addEventListener("click", () => {
+      const raw = 'curl "https://www.xxtui.com/xxtui/<API_KEY>?content=备份完成 ✅&title=服务器通知&from=prod-bak"';
+      navigator.clipboard
+        .writeText(raw)
+        .then(() => {
+          const btn = document.getElementById("copy-hero");
+          const prev = btn.textContent;
+          btn.textContent = "已复制";
+          setTimeout(() => (btn.textContent = prev), 1300);
+        })
+        .catch(() => {
+          alert("复制失败，可手动选择复制示例命令。");
+        });
+    });
 
-        document.getElementById("avatar").src = u.avatar_url;
-        document.getElementById("avatar").alt = u.login;
-
-        document.getElementById("name").textContent = u.name || u.login;
-        document.getElementById("login").textContent = "@" + u.login;
-
-        document.getElementById("bio").textContent =
-          u.bio || "这个用户比较低调，还没有写简介。";
-
-        document.getElementById("repos").textContent = u.public_repos;
-        document.getElementById("followers").textContent = u.followers;
-        document.getElementById("following").textContent = u.following;
-
-        // meta 信息
-        if (u.location) {
-          const loc = document.getElementById("location");
-          loc.style.display = "inline-flex";
-          loc.querySelector("span").textContent = u.location;
-        }
-        if (u.blog) {
-          const blog = document.getElementById("blog");
-          blog.style.display = "inline-flex";
-          blog.querySelector("span").textContent = u.blog;
-          const blogLink = document.getElementById("blog-link");
-          blogLink.style.display = "inline-flex";
-          blogLink.href = u.blog.startsWith("http") ? u.blog : "https://" + u.blog;
-        }
-        if (u.company) {
-          const comp = document.getElementById("company");
-          comp.style.display = "inline-flex";
-          comp.querySelector("span").textContent = u.company;
-        }
-
-        // GitHub 主页链接
-        const githubLink = document.getElementById("github-link");
-        githubLink.href = u.html_url;
-
-        statusEl.textContent = "加载完成 ✅";
-        setTimeout(() => (statusEl.style.display = "none"), 1200);
-      } catch (err) {
-        console.error(err);
-        statusEl.textContent = "加载失败，请稍后重试。";
-        statusEl.classList.add("error");
-      }
-    }
-
-    loadUser();
+    // 年份
+    document.getElementById("year").textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
