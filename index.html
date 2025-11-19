@@ -816,12 +816,13 @@ curl "https://www.xxtui.com/xxtui/&lt;API_KEY&gt;?content=备份完成 ✅&title
             <button class="code-tab" type="button" data-lang="python">Python</button>
           </div>
           <div id="code-curl" class="code-content">
-curl "https://www.xxtui.com/xxtui/&lt;API_KEY&gt;?content=Hello%20xxtui&title=测试推送&from=demo-script"
-
-# 推荐使用 POST（仅示例）：
 curl -X POST "https://www.xxtui.com/xxtui/&lt;API_KEY&gt;" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "content=备份完成 ✅&title=服务器通知&from=prod-bak"
+  -H "Content-Type: application/json" \
+  -d '{
+    "content": "备份完成 ✅",
+    "title": "服务器通知",
+    "from": "prod-bak"
+  }'
           </div>
           <div id="code-python" class="code-content" style="display:none;">
 import requests
@@ -829,14 +830,14 @@ import requests
 API_KEY = "&lt;API_KEY&gt;"
 url = f"https://www.xxtui.com/xxtui/{API_KEY}"
 
-data = {
+payload = {
     "content": "任务执行完毕 ✅",
     "title": "定时任务通知",
     "from": "python-cron",
-    # "channel": "WX_MP,EMAIL",  # 可选：指定一个或多个渠道
+    # "channel": "WX_MP,EMAIL",  # 可选
 }
 
-resp = requests.post(url, data=data, timeout=5)
+resp = requests.post(url, json=payload, timeout=5)
 print(resp.status_code, resp.text)
           </div>
         </div>
